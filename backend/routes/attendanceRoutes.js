@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 const {
     markAttendance,
@@ -10,16 +11,17 @@ const {
 } = require("../controllers/attendanceController")
 // ================= ROUTES =================
 // Mark Attendance
-router.post("/", markAttendance);
+// router.post("/", markAttendance);
+router.post("/", protect, markAttendance);
 // Get All Attendance
-router.get("/", getAllAttendance);
+router.get("/", protect, getAllAttendance);
 // Get Attendance
 // facultyId + date + hour
-router.get("/single", getAttendance);
+router.get("/single", protect, getAttendance);
 // Get Single Student Attendance
-router.get("/student", getStudentAttendance);
+router.get("/student", protect, getStudentAttendance);
 // Update Student Attendance
-router.put("/", updateStudentAttendance);
+router.put("/", protect, updateStudentAttendance);
 // Delete Attendance
-router.delete("/", deleteAttendance);
+router.delete("/", protect, deleteAttendance);
 module.exports = router;
