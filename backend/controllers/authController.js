@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 // ================= REGISTER =================
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, facultyId } = req.body;
         // check existing user
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -18,7 +18,8 @@ exports.register = async (req, res) => {
             name,
             email,
             password,
-            role
+            role,
+            facultyId   // ✅ ADDED (required for FACULTY, ignored for ADMIN)
         });
         res.status(201).json({
             success: true,
@@ -31,14 +32,15 @@ exports.register = async (req, res) => {
             message: error.message
         });
     }
-
 };
 // ================= LOGIN =================
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+
         // check user
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -46,16 +48,21 @@ exports.login = async (req, res) => {
             });
         }
         // check password
-       const isMatch = await bcrypt.compare(password, user.password);
-       if (!isMatch) {
-        return res.status(401).json({
-            success: false,
-            message: "Invalid credentials"
-    });
-}
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
         // create token
         const token = jwt.sign(
-            { id: user._id, role: user.role },
+            {
+                id: user._id,
+                role: user.role,
+                facultyId: user.facultyId || null   // ✅ ADDED
+            },
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         );

@@ -3,7 +3,6 @@ const Attendance = require("../models/Attendance");
 exports.markAttendance = async (req, res) => {
     try {
         const {
-            facultyId,
             subjectCode,
             department,
             year,
@@ -13,15 +12,11 @@ exports.markAttendance = async (req, res) => {
             hour,
             students
         } = req.body;
-        // Dynamic Counts
+        // 🔥 FacultyId comes from token (NOT request body)
+        const facultyId = req.user.facultyId;
         const totalStudents = students.length;
-        const presentCount = students.filter(
-            student => student.status === "P"
-        ).length;
-        const absentCount = students.filter(
-            student => student.status === "A"
-        ).length;
-        // Create Attendance
+        const presentCount = students.filter(s => s.status === "P").length;
+        const absentCount = students.filter(s => s.status === "A").length;
         const attendance = await Attendance.create({
             facultyId,
             subjectCode,
@@ -42,12 +37,6 @@ exports.markAttendance = async (req, res) => {
             attendance
         });
     } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({
-                success: false,
-                message: "Attendance already marked for this faculty/date/hour"
-            });
-        }
         res.status(500).json({
             success: false,
             message: "Failed to mark attendance",
@@ -58,7 +47,16 @@ exports.markAttendance = async (req, res) => {
 // ================= GET ALL ATTENDANCE =================
 exports.getAllAttendance = async (req, res) => {
     try {
-        const attendance = await Attendance.find();
+        let attendance;
+        if (req.user.role === "ADMIN") {
+            // ADMIN → all data
+            attendance = await Attendance.find();
+        } else {
+            // FACULTY → own data only
+            attendance = await Attendance.find({
+                facultyId: req.user.facultyId
+            });
+        }
         res.status(200).json({
             success: true,
             count: attendance.length,
@@ -72,11 +70,14 @@ exports.getAllAttendance = async (req, res) => {
         });
     }
 };
-// ================= GET ATTENDANCE =================
-// facultyId + date + hour
+// ================= GET ATTENDANCE (SINGLE CLASS) =================
 exports.getAttendance = async (req, res) => {
     try {
-        const { facultyId, date, hour } = req.query;
+        const { facultyId: queryFacultyId, date, hour } = req.query;
+        const facultyId =
+            req.user.role === "ADMIN"
+                ? queryFacultyId
+                : req.user.facultyId;
         const attendance = await Attendance.findOne({
             facultyId,
             date,
@@ -103,18 +104,20 @@ exports.getAttendance = async (req, res) => {
 // ================= GET SINGLE STUDENT ATTENDANCE =================
 exports.getStudentAttendance = async (req, res) => {
     try {
-        const {
-            facultyId,
-            date,
-            hour,
-            rollNumber
-        } = req.query;
+        const { facultyId: queryFacultyId, date, hour, rollNumber } = req.query;
+
+        const facultyId =
+            req.user.role === "ADMIN"
+                ? queryFacultyId
+                : req.user.facultyId;
+
         const attendance = await Attendance.findOne({
             facultyId,
             date,
             hour,
             "students.rollNumber": rollNumber
         });
+
         if (!attendance) {
             return res.status(404).json({
                 success: false,
@@ -122,8 +125,9 @@ exports.getStudentAttendance = async (req, res) => {
             });
         }
         const student = attendance.students.find(
-            student => student.rollNumber === rollNumber
+            s => s.rollNumber === rollNumber
         );
+
         res.status(200).json({
             success: true,
             student
@@ -140,12 +144,16 @@ exports.getStudentAttendance = async (req, res) => {
 exports.updateStudentAttendance = async (req, res) => {
     try {
         const {
-            facultyId,
+            facultyId: bodyFacultyId,
             date,
             hour,
             rollNumber,
             status
         } = req.body;
+        const facultyId =
+            req.user.role === "ADMIN"
+                ? bodyFacultyId
+                : req.user.facultyId;
         const attendance = await Attendance.findOne({
             facultyId,
             date,
@@ -158,7 +166,7 @@ exports.updateStudentAttendance = async (req, res) => {
             });
         }
         const student = attendance.students.find(
-            student => student.rollNumber === rollNumber
+            s => s.rollNumber === rollNumber
         );
         if (!student) {
             return res.status(404).json({
@@ -166,20 +174,15 @@ exports.updateStudentAttendance = async (req, res) => {
                 message: "Student not found"
             });
         }
-        // Update Status
         student.status = status;
-        // Recalculate Counts
-        attendance.presentCount = attendance.students.filter(
-            student => student.status === "P"
-        ).length;
-        attendance.absentCount = attendance.students.filter(
-            student => student.status === "A"
-        ).length;
+        // Recalculate counts
+        attendance.presentCount = attendance.students.filter(s => s.status === "P").length;
+        attendance.absentCount = attendance.students.filter(s => s.status === "A").length;
         attendance.totalStudents = attendance.students.length;
         await attendance.save();
         res.status(200).json({
             success: true,
-            message: "Student Attendance Updated Successfully",
+            message: "Student attendance updated successfully",
             attendance
         });
     } catch (error) {
@@ -193,11 +196,12 @@ exports.updateStudentAttendance = async (req, res) => {
 // ================= DELETE ATTENDANCE =================
 exports.deleteAttendance = async (req, res) => {
     try {
-        const {
-            facultyId,
-            date,
-            hour
-        } = req.body;
+        const { facultyId: bodyFacultyId, date, hour } = req.body;
+
+        const facultyId =
+            req.user.role === "ADMIN"
+                ? bodyFacultyId
+                : req.user.facultyId;
         const attendance = await Attendance.findOneAndDelete({
             facultyId,
             date,
@@ -211,7 +215,7 @@ exports.deleteAttendance = async (req, res) => {
         }
         res.status(200).json({
             success: true,
-            message: "Attendance Deleted Successfully"
+            message: "Attendance deleted successfully"
         });
     } catch (error) {
         res.status(500).json({

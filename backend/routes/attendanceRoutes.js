@@ -1,6 +1,7 @@
 const express = require("express");
-const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
+const { protect } = require("../middlewares/authMiddleware");
+const { authorizeRole } = require("../middlewares/roleMiddleware");
 const {
     markAttendance,
     getAllAttendance,
@@ -8,20 +9,48 @@ const {
     getStudentAttendance,
     updateStudentAttendance,
     deleteAttendance
-} = require("../controllers/attendanceController")
+} = require("../controllers/attendanceController");
 // ================= ROUTES =================
-// Mark Attendance
-// router.post("/", markAttendance);
-router.post("/", protect, markAttendance);
-// Get All Attendance
-router.get("/", protect, getAllAttendance);
-// Get Attendance
-// facultyId + date + hour
-router.get("/single", protect, getAttendance);
-// Get Single Student Attendance
-router.get("/student", protect, getStudentAttendance);
-// Update Student Attendance
-router.put("/", protect, updateStudentAttendance);
-// Delete Attendance
-router.delete("/", protect, deleteAttendance);
+// Mark Attendance (FACULTY + ADMIN)
+router.post(
+    "/",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    markAttendance
+);
+// Get All Attendance (ADMIN ONLY)
+router.get(
+    "/",
+    protect,
+    authorizeRole("ADMIN"),
+    getAllAttendance
+);
+// Get Attendance (FACULTY + ADMIN)
+router.get(
+    "/single",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    getAttendance
+);
+// Get Student Attendance (FACULTY + ADMIN)
+router.get(
+    "/student",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    getStudentAttendance
+);
+// Update Attendance (FACULTY + ADMIN)
+router.put(
+    "/",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    updateStudentAttendance
+);
+// Delete Attendance (ADMIN ONLY)
+router.delete(
+    "/",
+    protect,
+    authorizeRole("ADMIN"),
+    deleteAttendance
+);
 module.exports = router;

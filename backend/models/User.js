@@ -17,9 +17,15 @@ const userSchema = new mongoose.Schema(
         type: String,
         required: true
     },
+    facultyId: {
+        type: String,
+        required: function () {
+            return this.role === "FACULTY";
+        }
+    },
     role: {
         type: String,
-        enum: ["FACULTY"],
+        enum: ["FACULTY", "ADMIN"],
         default: "FACULTY"
     }
 },
