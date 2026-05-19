@@ -4,6 +4,7 @@ exports.markAttendance = async (req, res) => {
     try {
         const {
             subjectCode,
+            topicCovered,
             department,
             year,
             semester,
@@ -20,6 +21,7 @@ exports.markAttendance = async (req, res) => {
         const attendance = await Attendance.create({
             facultyId,
             subjectCode,
+            topicCovered,
             department,
             year,
             semester,

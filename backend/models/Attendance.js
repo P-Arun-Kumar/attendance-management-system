@@ -5,16 +5,27 @@ const attendanceSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true
-        },
-        subjectCode: {
+        }, subjectCode: {
             type: String,
             required: true,
             trim: true
+        },
+        // NEW FIELD
+        topicCovered: {
+            unit: {
+                type: Number,
+                required: true
+            },
+            topic: {
+                type: String,
+                required: true,
+                trim: true
+            }
         },
         department: {
             type: String,
             required: true,
-            trim: true
+          trim: true
         },
         year: {
             type: Number,
@@ -68,7 +79,7 @@ const attendanceSchema = new mongoose.Schema(
         timestamps: true
     }
 );
-// 🚫 Duplicate Attendance Protection
+// Duplicate Protection
 attendanceSchema.index(
     {
         facultyId: 1,
@@ -81,4 +92,7 @@ attendanceSchema.index(
         unique: true
     }
 );
-module.exports = mongoose.model("Attendance", attendanceSchema);
+module.exports = mongoose.model(
+    "Attendance",
+    attendanceSchema
+);
