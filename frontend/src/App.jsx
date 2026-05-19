@@ -1,19 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Login from "./pages/Login";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+
 import StudentAdd from "./pages/StudentAdd";
 import StudentList from "./pages/StudentList";
+import MarkAttendance from "./pages/MarkAttendance";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Route */}
+
+        {/* PUBLIC ROUTE */}
         <Route path="/" element={<Login />} />
-        <Route path="/students" element={<StudentList />} />
-        <Route path="/add-student" element={<StudentAdd />} />
-        {/* Faculty Protected Route */}
+
+        {/* FACULTY PROTECTED ROUTES */}
         <Route
           path="/faculty-dashboard"
           element={
@@ -22,7 +27,35 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Admin Protected Route */}
+
+        <Route
+          path="/mark-attendance"
+          element={
+            <ProtectedRoute allowedRoles={["FACULTY"]}>
+              <MarkAttendance />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute allowedRoles={["FACULTY", "ADMIN"]}>
+              <StudentList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/add-student"
+          element={
+            <ProtectedRoute allowedRoles={["FACULTY", "ADMIN"]}>
+              <StudentAdd />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN PROTECTED ROUTE */}
         <Route
           path="/admin-dashboard"
           element={
@@ -31,8 +64,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </BrowserRouter>
   );
 }
+
 export default App;
