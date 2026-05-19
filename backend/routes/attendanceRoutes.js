@@ -11,42 +11,49 @@ const {
     deleteAttendance
 } = require("../controllers/attendanceController");
 // ================= ROUTES =================
-// Mark Attendance (FACULTY + ADMIN)
+// MARK ATTENDANCE
+// FACULTY + ADMIN
 router.post(
     "/",
     protect,
     authorizeRole("FACULTY", "ADMIN"),
     markAttendance
 );
-// Get All Attendance (ADMIN ONLY)
+// GET ALL ATTENDANCE
+// FACULTY -> own data
+// ADMIN -> all data
 router.get(
     "/",
     protect,
-    authorizeRole("ADMIN"),
+    authorizeRole("FACULTY", "ADMIN"),
     getAllAttendance
 );
-// Get Attendance (FACULTY + ADMIN)
+// GET SINGLE ATTENDANCE
+// FACULTY + ADMIN
 router.get(
     "/single",
     protect,
     authorizeRole("FACULTY", "ADMIN"),
     getAttendance
 );
-// Get Student Attendance (FACULTY + ADMIN)
+// GET SINGLE STUDENT ATTENDANCE
+// FACULTY + ADMIN
 router.get(
     "/student",
     protect,
     authorizeRole("FACULTY", "ADMIN"),
     getStudentAttendance
 );
-// Update Attendance (FACULTY + ADMIN)
+// UPDATE ATTENDANCE
+// FACULTY + ADMIN
 router.put(
     "/",
     protect,
     authorizeRole("FACULTY", "ADMIN"),
     updateStudentAttendance
 );
-// Delete Attendance (ADMIN ONLY)
+// DELETE ATTENDANCE
+// ADMIN ONLY
 router.delete(
     "/",
     protect,
