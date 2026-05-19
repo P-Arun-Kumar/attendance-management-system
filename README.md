@@ -2,21 +2,24 @@
 
 ## Project Overview
 
-Attendance Management System is a MERN stack based application for managing student attendance.
+Attendance Management System is a MERN Stack based web application for managing student attendance.
 
-This system supports:
+The system supports:
 
-- Faculty Login Authentication
-- JWT Based Authorization
+- Faculty Authentication
+- Admin Authentication
+- JWT Authorization
 - Role Based Access Control
 - Attendance CRUD Operations
-- Faculty and Admin Access Management
+- Faculty-wise Attendance Management
+- Frontend + Backend Integration
 
 ---
 
 ## Tech Stack
 
 ### Backend
+
 - Node.js
 - Express.js
 - MongoDB
@@ -25,63 +28,123 @@ This system supports:
 - bcryptjs
 
 ### Frontend
-- React (To be developed)
+
+- React.js
+- Vite
+- Axios
+- JSX
+- CSS
 
 ---
 
 ## Features Completed
 
-### Authentication
-- User Registration
-- User Login
-- Password Hashing using bcrypt
-- JWT Token Generation
-- Protected Routes
+### Backend Authentication
 
-### Role Based Access
-- Faculty Role
-- Admin Role
-- Route Authorization Middleware
+✔ User Registration
+
+✔ User Login
+
+✔ Password Hashing using bcrypt
+
+✔ JWT Token Generation
+
+✔ Protected Routes
+
+---
+
+### Role Based Access Control
+
+✔ FACULTY Role
+
+✔ ADMIN Role
+
+✔ Authentication Middleware
+
+✔ Authorization Middleware
+
+---
 
 ### Attendance Module
-- Mark Attendance
-- Get Attendance
-- Get Student Attendance
-- Update Attendance
-- Delete Attendance
+
+✔ Mark Attendance
+
+✔ Get Attendance
+
+✔ Get Student Attendance
+
+✔ Update Attendance
+
+✔ Delete Attendance
+
+✔ Faculty-specific Attendance Access
+
+✔ Admin Access to All Attendance Data
+
+---
+
+### Frontend Progress
+
+✔ React Frontend Setup using Vite
+
+✔ Project Folder Structure Setup
+
+✔ Axios Configuration
+
+✔ Login UI Created
+
+✔ Backend API Connection Started
 
 ---
 
 ## Project Structure
 
 ```text
-backend
- ├── controllers
- ├── middlewares
- ├── models
- ├── routes
- ├── config
- └── server.js
+ATTENDANCE-MANAGEMENT
+├── backend
+│   ├── config
+│   ├── controllers
+│   ├── middlewares
+│   ├── models
+│   ├── routes
+│   └── server.js
+│
+├── frontend
+│   ├── src
+│   │   ├── assets
+│   │   ├── components
+│   │   ├── context
+│   │   ├── pages
+│   │   ├── services
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   └── vite.config.js
+│
+├── .gitignore
+└── README.md
 ```
 
 ---
 
 ## Installation
 
-Clone repository:
+Clone Repository
 
 ```bash
 git clone <repository-url>
 ```
 
-Install dependencies:
+### Backend Setup
 
 ```bash
 cd backend
 npm install
+npm run dev
 ```
 
-Create .env file:
+Create `.env` file:
 
 ```env
 MONGO_URI=your_mongodb_connection
@@ -89,9 +152,13 @@ PORT=5000
 JWT_SECRET=your_secret_key
 ```
 
-Run server:
+---
+
+### Frontend Setup
 
 ```bash
+cd frontend
+npm install
 npm run dev
 ```
 
@@ -99,7 +166,7 @@ npm run dev
 
 ## API Modules
 
-- Auth APIs
+- Authentication APIs
 - Attendance APIs
 - Student APIs
 - Faculty APIs
@@ -107,8 +174,29 @@ npm run dev
 
 ---
 
-## Current Status
+## Current Development Status
 
-Backend development completed.
+### Backend
 
-Frontend development in progress.
+✔ Completed
+
+### Frontend
+
+🚧 In Progress
+
+Current frontend module:
+
+- Login UI
+- API Integration
+- JWT Handling (next step)
+- Dashboard Development (upcoming)
+
+---
+
+## Future Enhancements
+
+- Faculty Dashboard
+- Admin Dashboard
+- Attendance Analytics
+- Syllabus Coverage Module
+- Reports & Filtering
