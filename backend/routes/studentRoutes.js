@@ -7,15 +7,42 @@ const {
     updateStudentByRollNumber,
     deleteStudentByRollNumber
 } = require("../controllers/studentController");
+const { protect } = require("../middlewares/authMiddleware");
+const { authorizeRole } = require("../middlewares/roleMiddleware");
 // ================= ROUTES =================
-// Add Students
-router.post("/", addStudents);
-// Get All Students
-router.get("/", getStudents);
-// Get Single Student by Roll Number
-router.get("/:rollNumber", getStudentByRollNumber);
-// Update Student by Roll Number
-router.put("/:rollNumber", updateStudentByRollNumber);
-// Delete Student by Roll Number
-router.delete("/:rollNumber", deleteStudentByRollNumber);
+// Add Students (FACULTY + ADMIN)
+router.post(
+    "/",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    addStudents
+);
+// Get All Students (FACULTY + ADMIN)
+router.get(
+    "/",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    getStudents
+);
+// Get Student by Roll Number
+router.get(
+    "/:rollNumber",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    getStudentByRollNumber
+);
+// Update Student
+router.put(
+    "/:rollNumber",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    updateStudentByRollNumber
+);
+// Delete Student (ADMIN only recommended)
+router.delete(
+    "/:rollNumber",
+    protect,
+    authorizeRole("FACULTY", "ADMIN"),
+    deleteStudentByRollNumber
+);
 module.exports = router;
