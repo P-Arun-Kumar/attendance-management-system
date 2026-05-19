@@ -2,21 +2,30 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Login />}
-        />
+        {/* Public Route */}
+        <Route path="/" element={<Login />} />
+        {/* Faculty Protected Route */}
         <Route
           path="/faculty-dashboard"
-          element={<FacultyDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={["FACULTY"]}>
+              <FacultyDashboard />
+            </ProtectedRoute>
+          }
         />
+        {/* Admin Protected Route */}
         <Route
           path="/admin-dashboard"
-          element={<AdminDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </BrowserRouter>
