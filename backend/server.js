@@ -7,6 +7,7 @@ const facultyRoutes = require("./routes/facultyRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const authRoutes = require("./routes/authRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
 dotenv.config();
 const app = express();
 // Database Connection
@@ -27,6 +28,8 @@ app.use("/api/subjects", subjectRoutes);
 app.use("/api/attendance", attendanceRoutes);
 // Auth Routes
 app.use("/api/auth", authRoutes);
+// Faculty Assignment Routes
+app.use("/api/assignments", assignmentRoutes);
 // ================= HOME ROUTE =================
 app.get("/", (req, res) => {
     res.send("Backend Running Successfully");
